@@ -15,4 +15,10 @@
     <Folder Include="ANTLR\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="ANTLR\AssignmentTestCases.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -2,9 +2,9 @@
 int a = 5;
 float z = 3.14 * r;
 char c = 'x';
+char c = x;
 
 ### Inválidas
 int 1x = 5;
 float = 3.14;
-char c = x;
 int a = 5 + ;

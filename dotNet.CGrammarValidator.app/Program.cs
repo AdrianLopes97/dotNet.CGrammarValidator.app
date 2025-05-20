@@ -1,38 +1,57 @@
 ﻿using Antlr4.Runtime;
 using dotNet.CGrammarValidator.app;
 using System;
+using System.IO;
 
 class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Digite uma linha de atribuição (ex: int x = 5 + y;):");
-        var input = Console.ReadLine();
+        string filePath = Path.Combine("ANTLR", "AssignmentTestCases.txt");
 
-        if (input == null) 
+        if (!File.Exists(filePath))
         {
-            Console.WriteLine("Entrada inválida.");
+            Console.WriteLine($"Arquivo não encontrado: {filePath}");
             return;
         }
 
-        AntlrInputStream inputStream = new AntlrInputStream(input);
-        AssignmentLexer lexer = new AssignmentLexer(inputStream);
-        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-        AssignmentParser parser = new AssignmentParser(tokenStream);
+        var lines = File.ReadAllLines(filePath);
+        int lineNumber = 0;
 
-        // Configura o listener de erro para lançar exceções
-        parser.RemoveErrorListeners();
-        parser.AddErrorListener(new ThrowingErrorListener());
+        foreach (var rawLine in lines)
+        {
+            var input = rawLine.Trim();
 
-        try
-        {
-            var tree = parser.assignment();
-            Console.WriteLine("Atribuição válida!");
-            Console.WriteLine(tree.ToStringTree(parser));
+            // Ignora linhas em branco e comentários
+            if (string.IsNullOrWhiteSpace(input) || input.StartsWith("#"))
+                continue;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine($"Linha {lineNumber}: {input}");
+
+            AntlrInputStream inputStream = new AntlrInputStream(input);
+            AssignmentLexer lexer = new AssignmentLexer(inputStream);
+            CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+            AssignmentParser parser = new AssignmentParser(tokenStream);
+
+            parser.RemoveErrorListeners();
+            parser.AddErrorListener(ThrowingErrorListener.Instance);
+
+            try
+            {
+                var tree = parser.assignment();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Válida");
+                Console.WriteLine(tree.ToStringTree(parser));
+            }
+            catch (Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Inválida: " + e.Message);
+            }
+            lineNumber++;
         }
-        catch (Exception e)
-        {
-            Console.WriteLine("Atribuição inválida: " + e.Message);
-        }
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine("Pressione qualquer tecla para sair...");
+        Console.ReadKey();
     }
 }
