@@ -64,3 +64,84 @@ Se você modificar o arquivo `Assignment.g4` ou adicionar uma nova gramática, v
 
 5.  **Inclua os novos arquivos no projeto:**
     Após a geração, certifique-se de que os novos arquivos `.cs` estejam incluídos no seu projeto `.csproj` se eles não forem automaticamente detectados pela sua IDE.
+
+## Resultados da Validação
+
+A seguir estão os resultados obtidos ao validar o arquivo `ANTLR/AssignmentTestCases.txt` com a gramática `Assignment.g4` atual:
+
+```
+Linha 0: int a = 5;
+Válida
+(assignment (type int) a = (expr 5) ;)
+```
+**Explicação:** A atribuição `int a = 5;` é sintaticamente válida.
+**Árvore de Análise Sintática:**
+*   `assignment`: Representa a regra de atribuição completa.
+*   `type int`: Indica que o tipo da variável é `int`.
+*   `a`: É o identificador (nome) da variável.
+*   `=`: É o operador de atribuição.
+*   `expr 5`: Representa a expressão atribuída, que neste caso é o número `5`.
+*   `;`: Marca o final da instrução de atribuição.
+
+```
+Linha 1: float z = 3.14 * r;
+Válida
+(assignment (type float) z = (expr (expr 3.14) * (expr r)) ;)
+```
+**Explicação:** A atribuição `float z = 3.14 * r;` é sintaticamente válida.
+**Árvore de Análise Sintática:**
+*   `assignment`: Representa a regra de atribuição.
+*   `type float`: Indica que o tipo da variável é `float`.
+*   `z`: É o identificador da variável.
+*   `=`: Operador de atribuição.
+*   `expr (expr 3.14) * (expr r)`: Representa a expressão de multiplicação.
+    *   `expr 3.14`: O primeiro operando é o número `3.14`.
+    *   `*`: O operador de multiplicação.
+    *   `expr r`: O segundo operando é o identificador `r` (presumivelmente uma variável).
+*   `;`: Marca o final da instrução.
+
+```
+Linha 2: char c = 'x';
+Válida
+(assignment (type char) c = (expr 'x') ;)
+```
+**Explicação:** A atribuição `char c = 'x';` é sintaticamente válida.
+**Árvore de Análise Sintática:**
+*   `assignment`: Representa a regra de atribuição.
+*   `type char`: Indica que o tipo da variável é `char`.
+*   `c`: É o identificador da variável.
+*   `=`: Operador de atribuição.
+*   `expr 'x'`: Representa a expressão atribuída, o caractere `'x'`.
+*   `;`: Marca o final da instrução.
+
+```
+Linha 3: char c = x;
+Válida
+(assignment (type char) c = (expr x) ;)
+```
+**Explicação:** A atribuição `char c = x;` é sintaticamente válida. Assume-se que `x` é um identificador de uma variável previamente declarada e compatível com o tipo `char`.
+**Árvore de Análise Sintática:**
+*   `assignment`: Representa a regra de atribuição.
+*   `type char`: Indica que o tipo da variável é `char`.
+*   `c`: É o identificador da variável que está sendo declarada e atribuída.
+*   `=`: Operador de atribuição.
+*   `expr x`: Representa a expressão atribuída, que é o valor do identificador `x`.
+*   `;`: Marca o final da instrução.
+
+```
+Linha 4: int 1x = 5;
+Inválida: Linha 1:4 - extraneous input '1' expecting ID
+```
+**Explicação:** A declaração `int 1x = 5;` é inválida porque um identificador de variável (neste caso, `1x`) não pode começar com um dígito. A gramática espera um `ID` (identificador válido) após a palavra-chave `int`, mas encontrou `1`.
+
+```
+Linha 5: float = 3.14;
+Inválida: Linha 1:6 - missing ID at '='
+```
+**Explicação:** A declaração `float = 3.14;` é inválida porque falta o identificador (nome da variável) antes do operador de atribuição `=`. A gramática espera um `ID` após a palavra-chave `float`.
+
+```
+Linha 6: int a = 5 + ;
+Inválida: Linha 1:12 - mismatched input ';' expecting {'(', ID, NUMBER, CHAR}
+```
+**Explicação:** A atribuição `int a = 5 + ;` é inválida porque a expressão à direita do operador `+` está incompleta. A gramática esperava um operando (como um `ID`, `NUMBER`, `CHAR` ou uma sub-expressão entre parênteses `'(' expr ')'`) após o `+`, mas encontrou o terminador de instrução `;`.
