@@ -1,6 +1,7 @@
 # dotNet.CGrammarValidator.app
 
 Este projeto é um validador de gramática C.
+Foi criado como parte de uma atividade avaliativa da AP2 para ULBRA - Compiladores
 
 ## Como usar
 
